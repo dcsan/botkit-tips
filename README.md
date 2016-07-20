@@ -45,7 +45,9 @@ Do that on the hosting provider managing your DNS.
 
 Now, you have to wait for that domain to 'propagate' - reach your machine before you can get the certificate.
 This could take 30 mins or longer. So let's do some other stuff.
-You can check this using `dig YOURDOMAIN`
+You can check this using `dig YOURDOMAIN` and see if it's pointing to your new IP# yet.
+Be aware that sometimes DNS propagation is uneven - so even if you see the right IP on your local machine, depending on the DNS servers your remote machine is using, it may not be updated there yet.
+If you really want to speed things up, I think you can set your server to use the DNS servers of your DNS host itself... (inception!)
 
 ## install NgInx
 On the new machine:
@@ -75,17 +77,18 @@ So we have to get it ourselves using Wget
 ```
     wget https://dl.eff.org/certbot-auto
     chmod a+x certbot-auto
-
-    # run the script
-    chmod a+x certbot-auto
 ```
 
+run the certbot script to validate your domain and get a certificate
+
+```
+  chmod a+x certbot-auto
+  ./certbot-auto certonly --standalone -d EXAMPLE.COM -d www.EXAMPLE.COM
+```
+Get a certificate.
 When the app opens, enter the name of your domain and your email etc.
 Manually get a certificate using the standalone server.
-
-```
-    ./certbot-auto certonly --standalone -d EXAMPLE.COM -d www.EXAMPLE.COM
-```
+This should shortcut having to setup NgInx to serve the certificate.
 
 ## Set the auto renewal
 check the renewal script is working
@@ -107,7 +110,8 @@ This will set the task to run at 14:00 every day and check if the cert needs ren
 There are various ways to debug this but at the very least come back a few days later and check there are no cron task errors.
 
 
-## make sure webroot is avaialable in nginx config
+## enable NgInx to serve up the certificate
+Make sure webroot is available in nginx config
 
     sudo vim /etc/nginx/sites-available/default
 
@@ -126,9 +130,8 @@ Restart nginx
 
     sudo service nginx reload
 
-You should see an OK. So this means NgInx can now server the certificate.
+You should see an OK. So this means NgInx can now serve the certificate.
 At this point you should be able to access the NgInx page via https too.
-
 
 
 ## edit nginx config
@@ -159,7 +162,7 @@ server {
 }
 ```
 
-You can check the SSL status here
+You can check your SSL status here
 
 https://www.ssllabs.com/ssltest/analyze.html?d=EXAMPLE.COM&latest
 
