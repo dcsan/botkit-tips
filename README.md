@@ -161,6 +161,19 @@ server {
     return 301 https://$host$request_uri;
 }
 ```
+restart it, and check it's ok
+
+```
+  sudo service nginx restart
+```
+
+If your nginx config has problems or shows `fail` on restart, you can use this command to debug it:
+
+```
+nginx -c /etc/nginx/sites-available/default -t
+```
+[More on NgInx](https://www.nginx.com/resources/wiki/start/#pre-canned-configurations)
+
 
 You can check your SSL status here
 
@@ -219,7 +232,7 @@ Woot! All Done!
 
 # Just the script
 
-Below I'm trying to make a more abbreviated version with just the script...
+Below I'm trying to make a more abbreviated version with just the script and no explanations.
 
 ```
     # get nginx
@@ -243,6 +256,8 @@ add this to ssl block
 get certificate
 
 ```
+    sudo service nginx restart   # check it works
+
     # get certbot
     sudo apt-get -y install git bc
     sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
@@ -262,9 +277,6 @@ get certificate
     rm certcron
     # list the crontab - you should see the command above
     crontab -l
-
-    # more security stuff
-    sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
 ```
 
@@ -312,3 +324,7 @@ Command line to setup the cert
 # References
 Great guide with more details
 [DigitalOcean guide](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04)
+
+The DO guide includes other docs on how to harden your crypto, using 2048 bit certs.
+
+    sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048

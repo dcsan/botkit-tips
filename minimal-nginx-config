@@ -1,0 +1,55 @@
+# You may add here your
+# server {
+#       ...
+# }
+# statements for each of your virtual hosts to this file
+
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+server {
+
+        # listen 80 default_server;
+        # listen [::]:80 default_server ipv6only=on;
+
+        ### add these four lines
+        listen 443 ssl;
+        server_name EXAMPLE.COM www.EXAMPLE.COM;
+        ssl_certificate /etc/letsencrypt/live/EXAMPLE.COM/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/EXAMPLE.COM/privkey.pem;
+
+
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+
+        # Make site accessible from http://localhost/
+        server_name EXAMPLE.COM;
+
+
+        location / {
+                # replace with your IP# and port
+                proxy_pass http://XXX.XX.XX.XXX:PORT;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+        }
+
+}
+
+server {
+    listen 80;
+    server_name example.com www.example.com;
+    return 301 https://$host$request_uri;
+}
